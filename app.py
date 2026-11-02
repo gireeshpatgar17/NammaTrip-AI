@@ -119,7 +119,15 @@ with tabs[0]:
         for emoji, title, desc, dest_id in samples:
             d = by_id.get(dest_id)
             if d:
-                st.markdown(f'<div class="card"><div class="destination-title">{emoji} &nbsp;{title}</div><div class="note">{desc}</div><div>{"".join(f"<span class='tag'>{x.title()}</span>" for x in d["categories"][:3])}</div></div>', unsafe_allow_html=True)
+                sample_tags = "".join(
+                    f"<span class='tag'>{item.title()}</span>"
+                    for item in d["categories"][:3]
+                )
+                st.markdown(
+                    f'<div class="card"><div class="destination-title">{emoji} &nbsp;{title}</div>'
+                    f'<div class="note">{desc}</div><div>{sample_tags}</div></div>',
+                    unsafe_allow_html=True,
+                )
         st.markdown("<br>", unsafe_allow_html=True)
         st.info("**One destination, thoughtfully paced.** This version focuses on a single base destination so your plan stays practical. Use current maps to plan transfers between cities.")
 
