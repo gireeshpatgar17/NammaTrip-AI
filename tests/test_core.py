@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import sys
 import types
+import json
 
 import pytest
 
@@ -87,6 +88,33 @@ def test_ai_api_failure_graceful(preferences, destinations, monkeypatch):
     monkeypatch.setitem(sys.modules, "groq", types.SimpleNamespace(Groq=BrokenClient))
     with pytest.raises(TimeoutError, match="simulated timeout"):
         generate_ai_itinerary(preferences, destinations[0])
+
+
+def test_ai_empty_day_is_completed_by_local_planner(preferences, destinations, monkeypatch):
+    destination = destinations[0]
+
+    class FakeClient:
+        def __init__(self, **kwargs):
+            self.chat = self
+            self.completions = self
+
+        def create(self, **kwargs):
+            content = {
+                "days": [
+                    {"activities": []},
+                    {"activities": [{"attraction": destination["attractions"][0]["name"]}]},
+                ],
+                "practical_tips": "Check venue guidance.",
+            }
+            message = types.SimpleNamespace(content=json.dumps(content))
+            return types.SimpleNamespace(choices=[types.SimpleNamespace(message=message)])
+
+    monkeypatch.setenv("GROQ_API_KEY", "test-only")
+    monkeypatch.setitem(sys.modules, "groq", types.SimpleNamespace(Groq=FakeClient))
+    trip = generate_ai_itinerary(preferences, destination)
+    assert trip["source"] == "ai"
+    assert all(day["activities"] for day in trip["days"])
+    assert any("local itinerary planner" in note for note in trip["assumptions"])
 
 
 def test_save_and_retrieve_itinerary(preferences, destinations, tmp_path):

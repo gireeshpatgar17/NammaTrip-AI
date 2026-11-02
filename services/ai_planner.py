@@ -49,10 +49,32 @@ def generate_ai_itinerary(preferences: dict[str, Any], destination: dict[str, An
         raise RuntimeError("The optional Groq SDK is unavailable; install requirements.txt or use the local planner.") from exc
     client = Groq(api_key=key, timeout=25.0, max_retries=1)
     facts = [{"name": a["name"], "description": a["description"], "duration_hours": a.get("duration_hours"), "categories": a.get("categories", [])} for a in destination.get("attractions", [])]
-    prompt = {"preferences": {k: str(v) for k, v in preferences.items() if k not in {"dietary"}}, "destination": destination["name"], "curated_attractions": facts, "instructions": "Return JSON only, exactly the requested number of days. Choose only attractions listed. Arrange available attractions over days; use local cuisine/culture suggestions only when supported by attraction descriptions. Do not invent distances, hours, prices, bookings or services."}
-    response = client.chat.completions.create(model=_setting("GROQ_MODEL", "openai/gpt-oss-20b"), temperature=0.3, response_format={"type": "json_object"}, messages=[{"role": "system", "content": "Create a practical travel plan. Use only provided attraction facts. Return JSON with days: [{date, activities:[{time,slot,attraction}]}], practical_tips."}, {"role": "user", "content": json.dumps(prompt, ensure_ascii=False)}])
+    prompt = {"preferences": {k: str(v) for k, v in preferences.items() if k not in {"dietary"}}, "destination": destination["name"], "curated_attractions": facts, "instructions": "Return JSON only, exactly the requested number of days. Every day must have at least one activity, preferably 2-3 when the dataset allows. Choose only attractions listed and use each attraction name exactly as written. Arrange available attractions over days; use local cuisine/culture suggestions only when supported by attraction descriptions. Do not invent distances, hours, prices, bookings or services."}
+    response = client.chat.completions.create(model=_setting("GROQ_MODEL", "openai/gpt-oss-20b"), temperature=0.3, response_format={"type": "json_object"}, messages=[{"role": "system", "content": "Create a practical day-by-day travel plan. Use only provided attraction facts. Never return a day with an empty activities array. Return JSON with days: [{date, activities:[{time,slot,attraction}]}], practical_tips."}, {"role": "user", "content": json.dumps(prompt, ensure_ascii=False)}])
     raw = response.choices[0].message.content
     if not raw:
         raise ValueError("AI returned an empty response.")
-    validated = validate_ai_itinerary(json.loads(raw), destination, int(preferences["days"]))
-    return {"id": f"ai-{destination['id']}", "title": f"{destination['name']} · {preferences['days']} days", "destination_id": destination["id"], "destination": destination["name"], "start_location": preferences["start_location"], **validated, "source": "ai", "assumptions": ["AI arranged curated attractions; descriptions and visit durations come from the local dataset.", "Travel distances and live journey times are not modeled."]}
+    response_data = json.loads(raw)
+    # Some model responses include all requested days but leave one day's list
+    # empty. Fill only those gaps with the deterministic local planner; keep
+    # AI-selected activities for all days it successfully planned.
+    days = response_data.get("days") if isinstance(response_data, dict) else None
+    fallback_used = False
+    if isinstance(days, list) and len(days) == int(preferences["days"]):
+        empty_days = [i for i, day in enumerate(days) if isinstance(day, dict) and not day.get("activities")]
+        if empty_days:
+            fallback_used = True
+            from services.itinerary_engine import generate_itinerary
+
+            local_days = generate_itinerary(preferences, [destination])["days"]
+            for index in empty_days:
+                days[index]["activities"] = [
+                    {"time": activity["time"], "slot": activity["slot"], "attraction": activity["attraction"]}
+                    for activity in local_days[index]["activities"]
+                ]
+            response_data["days"] = days
+    validated = validate_ai_itinerary(response_data, destination, int(preferences["days"]))
+    assumptions = ["AI arranged curated attractions; descriptions and visit durations come from the local dataset.", "Travel distances and live journey times are not modeled."]
+    if fallback_used:
+        assumptions.append("A day the AI left blank was filled using the local itinerary planner.")
+    return {"id": f"ai-{destination['id']}", "title": f"{destination['name']} · {preferences['days']} days", "destination_id": destination["id"], "destination": destination["name"], "start_location": preferences["start_location"], **validated, "source": "ai", "assumptions": assumptions}
