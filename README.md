@@ -6,6 +6,10 @@
 
 NammaTrip turns those preferences into a practical single-destination itinerary. It works without an API key using a deterministic local planner and curated attraction dataset. When configured, Groq can arrange the same curated stops; it cannot introduce unverified attractions. Budget figures are transparent planning allowances, not live quotes.
 
+## Live application
+
+Try the deployed app: [nammatrip-ai.streamlit.app](https://nammatrip-ai.streamlit.app/).
+
 ## Features
 
 - Preference form for origin, dates, trip length, budget, group size, interests, pace, transport mode, stay and dietary needs.
