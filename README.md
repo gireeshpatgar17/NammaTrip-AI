@@ -19,6 +19,10 @@ NammaTrip turns those preferences into a practical single-destination itinerary.
 - Contextual in-app assistant for itinerary facts, visit durations and budget questions.
 - Responsive Streamlit layout, destination filtering, sample trip inspirations and a persistent estimate disclaimer.
 
+## Hackathon presentation
+
+The six-slide presentation is available as [NammaTrip AI presentation (PPTX)](output/NammaTrip-AI-Hackathon-Presentation.pptx). It covers the problem statement, existing system, solution differences, approach, technology and architecture, and conclusion.
+
 ## Architecture
 
 ```mermaid
