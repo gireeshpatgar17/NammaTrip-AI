@@ -1,50 +1,27 @@
-# NammaTrip AI — slide-by-slide presentation content
+# NammaTrip AI — presentation outline
 
-## Slide 1 — NammaTrip AI
-**Karnataka, thoughtfully planned.** A preference-led travel planner for the Kannada Digital Innovation Hackathon 2026. Team / presenter: add names before submission.
+The final deck follows the organizer’s required sections in order. It contains a cover plus six content slides.
 
-## Slide 2 — The problem
-Planning a Karnataka trip means piecing together places, interests, travel days and a realistic spend from scattered information. Generic search results do not turn those preferences into a clear daily plan.
+## Cover — NammaTrip AI
+AI travel planner for Karnataka. Kannada Digital Innovation Hackathon 2026, The National Institute of Engineering, Mysuru.
 
-## Slide 3 — Existing approaches and their limits
-- Search/maps help discover places but leave the itinerary and budget assembly to the traveller.
-- Generic chat assistants can suggest a plan, but may mix in unsupported details or fail to distinguish estimates from facts.
-- Booking platforms focus on inventory and transactions rather than preference-led, cross-experience planning.
+## 1. Problem Statement
+Develop an AI-powered travel planner that creates personalized Karnataka itineraries based on traveller interests, available time, budget and preferred experience. Identify trip planners, especially visitors unfamiliar with the region and groups balancing different needs. Explain why joining scattered destination information, daily schedules and spend matters.
 
-## Slide 4 — Our solution
-NammaTrip asks about origin, destination, dates, group size, budget, interests, pace and travel preferences. It creates a day-by-day plan from a curated Karnataka dataset and estimates a transparent group budget.
+## 2. Existing System
+Show the typical workflow across search, maps, guides, transport and stay providers, and manual day planning. Explain the gaps: repeated preferences, manual reconciliation, AI suggestions that need checking, and changing access and price details. State that these are qualitative workflow observations, not measured market findings.
 
-## Slide 5 — How it differs
-- Works without an API through a deterministic local planner.
-- Optional Groq AI arranges only attractions in the curated destination data; schema and attraction names are validated.
-- Costs are decomposed and labeled as planning estimates, not live prices.
-- Trips can be adjusted, saved locally and downloaded as printable HTML or text.
+## 3. How Your Solution Is Different
+Compare the common workflow with NammaTrip: one preference form, curated Karnataka stops, optional AI restricted to listed attraction names, a deterministic fallback, transparent planning estimates, and editable, printable itineraries.
 
-## Slide 6 — Methodology
-1. Validate trip preferences.
-2. Rank destination stops by interest match and pace.
-3. Assign stops across trip days and visit slots.
-4. Calculate per-person and group category allowances.
-5. Optionally request Groq AI organization and validate it against the destination data.
-6. Let the traveller edit, save and export.
+## 4. Approach
+Present the five steps: capture trip preferences, select curated attractions, arrange visits by day part, estimate costs by category, and let the traveller modify, save or download the plan. Explain the local-first design and validation of optional Groq output.
 
-## Slide 7 — Technology stack
-Python 3.11 · Streamlit · Pandas · Groq Python SDK (optional) · JSON destination catalogue · SQLite persistence · pytest.
+## 5. Tech Stack & Architecture Diagram
+List Python 3.11, Streamlit, Pandas, Groq Python SDK, JSON, SQLite and pytest. Show preference input and validation, curated destination data, optional Groq and local planning paths, then validation, budget, editing, save and export services.
 
-## Slide 8 — Architecture
-Show the Mermaid diagram in `README.md`: Streamlit UI → preference validation → optional AI/local planner → validated itinerary → budget, export and SQLite.
+## 6. Conclusion
+Summarize the product and intended impact: less manual itinerary assembly, clearer budget categories and traveller control. State current limits: one destination per plan, indicative costs, no live route times or availability. Show future scope: Kannada interface, verified live sources, multi-city routing and durable user saves.
 
-## Slide 9 — Karnataka destination coverage
-Mysuru · Hampi · Coorg · Chikkamagaluru · Gokarna · Badami · Bengaluru · Udupi · Shivamogga & Jog Falls · Belur & Halebidu. Each includes suggested attractions, categories, visit durations and practical notes.
-
-## Slide 10 — Impact and responsible presentation
-Reduce planning effort, make regional experiences easier to compare, and help travellers see a budget before they go. The interface avoids fake reviews, ratings, live prices, booking claims and unsupported route times.
-
-## Slide 11 — Limitations and future scope
-Single-destination plans; indicative costs; no live routing, opening data or availability; local SQLite saves are not durable on ephemeral hosting. Future work: Kannada UI, verified source refresh, multi-city routing, accessible travel filters and managed storage.
-
-## Slide 12 — Demo and close
-Enter a trip, generate the local plan, inspect a cost breakdown, swap a stop, ask a question, save and download. NammaTrip AI: more Karnataka, more your way.
-
-## Presenter completion notes
-Replace the presenter/team placeholder. Add a screenshot of the running app and actual deployment URL only after deployment. Do not claim benchmark results or integrations that have not been tested.
+## Presenter notes
+Do not add fabricated team names, market statistics, live pricing or a deployed URL. Add a deployed URL only after it has been verified.

@@ -21,7 +21,7 @@ NammaTrip turns those preferences into a practical single-destination itinerary.
 
 ## Hackathon presentation
 
-The six-slide presentation is available as [NammaTrip AI presentation (PPTX)](output/NammaTrip-AI-Hackathon-Presentation.pptx). It covers the problem statement, existing system, solution differences, approach, technology and architecture, and conclusion.
+The seven-slide presentation is available as [NammaTrip AI presentation (PPTX)](output/NammaTrip-AI-Hackathon-Presentation.pptx). It includes a cover followed by the six required sections: problem statement, existing system, solution differences, approach, tech stack and architecture, and conclusion.
 
 ## Architecture
 
